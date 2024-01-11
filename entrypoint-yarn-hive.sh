@@ -24,10 +24,24 @@ then
   hdfs dfs -mkdir -p /opt/spark/data
   echo "Created /opt/spark/data hdfs dir"
 
-
   # copy the data to the data HDFS directory
   hdfs dfs -copyFromLocal /opt/spark/data/* /opt/spark/data
   hdfs dfs -ls /opt/spark/data
+
+  zeppelin-daemon.sh start
+
+  # Start PostgreSQL service in the background
+  service postgresql start
+
+  # For HIVE
+  hdfs dfs -mkdir -p /warehouse/tablespace/managed/hive
+  hdfs dfs -chmod -R 775 /warehouse
+  # hdfs dfs -chown -R hive:hadoop /hive
+    echo "Created /warehouse/tablespace/managed/hive hdfs dir"
+
+  # Create Hive schema (PostgreSQL)
+  ${HIVE_HOME}/bin/schematool -initSchema -dbType postgres
+  
 
 elif [ "$SPARK_WORKLOAD" == "worker" ];
 then

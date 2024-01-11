@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Config Hiveserver2 -->
+    <property>
+        <name>hive.server2.thrift.port</name>
+        <value>10000</value>
+    </property>
+
+    <property>
+        <name>hive.server2.enable.doAs</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>hive.server2.transport.mode</name>
+        <value>binary</value>
+        <description>Set to http to enable HTTP transport mode</description>
+    </property>
+
+    <property>
+        <name>hive.server2.thrift.http.port</name>
+        <value>10002</value>
+        <description>HTTP port number to listen on</description>
+    </property>
+
+    <property>
+        <name>hive.server2.thrift.http.max.worker.threads</name>
+        <value>500</value>
+        <description>Maximum worker threads in the server pool</description>
+    </property>
+
+    <property>
+        <name>hive.server2.thrift.http.min.worker.threads</name>
+        <value>5</value>
+        <description>Minimum worker threads in the server pool</description>
+    </property>
+
+    <!-- Add any HiveServer2 specific configurations here if needed -->
+
+    <!-- Confing HIVE METASTORE -->
+
+    <property>
+        <name>hive.metastore.local</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>hive.metastore.warehouse.dir</name>
+        <value>/warehouse/tablespace/managed/hive</value>
+    </property>
+
+    <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>org.postgresql.Driver</value>
+    </property>
+
+    <property>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>jdbc:postgresql://postgresdb:5432/hivemetastoredb</value>
+    </property>
+
+    <property>
+        <name>javax.jdo.option.ConnectionUserName</name>
+        <value>postgres</value>
+    </property>
+
+    <property>
+        <name>javax.jdo.option.ConnectionPassword</name>
+        <value>postgres</value>
+    </property>
+
+    <property>
+        <name>hive.metastore.port</name>
+        <value>9083</value>
+    </property>
+
+    <property>
+        <name>hive.metastore.uris</name>
+        <value>thrift://hive-metastore:9083</value>
+        <description>Thrift server hostname and port</description>
+    </property>
+
+    <!-- <property>
+        <name>mapreduce.input.fileinputformat.input.dir.recursive</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>spark.eventLog.enabled</name>
+        <value>true</value>
+    </property> -->
+
+    <!-- <property>
+        <name>datanucleus.autoCreateSchema</name>
+        <value>false</value>
+    </property>
+
+    <property>
+        <name>datanucleus.fixedDatastore</name>
+        <value>true</value>
+    </property> -->
+
+    <!-- <property>
+        <name>datanucleus.autoStartMechanism</name>
+        <value>SchemaTable</value>
+    </property> -->
+
+    <!-- Uncomment the following property if needed -->
+    <!--
+    <property>
+        <name>hive.metastore.event.db.notification.api.auth</name>
+        <value>false</value>
+        <description>
+            Should metastore do authorization against database notification related APIs such as get_next_notification.
+            If set to true, then only the superusers in proxy settings have the permission
+        </description>
+    </property>
+    -->
+
+
+</configuration>

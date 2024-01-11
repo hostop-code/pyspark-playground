@@ -29,6 +29,8 @@ then
   hdfs dfs -copyFromLocal /opt/spark/data/* /opt/spark/data
   hdfs dfs -ls /opt/spark/data
 
+  zeppelin-daemon.sh start
+
 elif [ "$SPARK_WORKLOAD" == "worker" ];
 then
   hdfs namenode -format
