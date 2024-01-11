@@ -40,7 +40,6 @@ stop:
 stop-yarn:
 	docker-compose -f docker-compose.yarn.yml stop
 
-
 submit:
 	docker exec da-spark-master spark-submit --master spark://spark-master:7077 --deploy-mode client ./apps/$(app)
 
