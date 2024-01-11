@@ -49,9 +49,6 @@ then
   echo "Success running metastore on port 9083"
 
 
-  echo "Start service hiveserver2"
-  ${HIVE_HOME}/bin/hive --service hiveserver2 --hiveconf hive.server2.thrift.port=10000 --hiveconf hive.root.logger=INFO,console &
-
 elif [ "$WORKLOAD" == "trino" ];
 then
   echo "Setup Trino Master"

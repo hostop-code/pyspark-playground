@@ -59,6 +59,19 @@ services:
     networks:
       - hadoop-network
 
+  hive-server:
+    container_name: hive-server
+    image: da-hadoop-ubuntu-standalone
+    entrypoint: ['./entrypoint.sh', 'testing']
+    depends_on:
+      - master
+    ports:
+      - '9084:9083' # Hive Metastore service
+      - '10010:10000' # Hive Metastore Database 
+      - '10012:10002' # Hive UI
+    networks:
+      - hadoop-network
+
   worker:
       image: da-hadoop-ubuntu-standalone
       entrypoint: ['./entrypoint.sh', 'worker']
