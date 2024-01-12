@@ -49,6 +49,10 @@ if [ "$WORKLOAD" == "datanode" ]; then
   hdfs --daemon start datanode
 fi
 
+if [ "$WORKLOAD" == "yarn-resource-manager" ]; then
+  
+fi
+
 if [ "$WORKLOAD" == "hive-metastore" ]; then
   # Connect Hive schema (PostgreSQL)
   ${HIVE_HOME}/bin/schematool -initSchema -dbType postgres 
