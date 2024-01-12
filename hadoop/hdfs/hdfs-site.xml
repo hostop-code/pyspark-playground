@@ -30,7 +30,7 @@
 
     <property>
         <name>dfs.namenode.secondary.http-address</name>
-        <value>secondarynamenode:50090</value>
+        <value>hdfs-secondarynamenode:50090</value>
       </property>
     
 </configuration>
