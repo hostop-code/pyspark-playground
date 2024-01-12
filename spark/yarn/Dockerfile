@@ -4,6 +4,8 @@ LABEL maintainer="kevin-bda"
 
 ARG SPARK_VERSION=3.4.2
 
+ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+
 ENV SPARK_HOME=/opt/spark
 RUN mkdir -p $SPARK_HOME
 WORKDIR $SPARK_HOME
@@ -13,7 +15,6 @@ RUN curl -L https://dlcdn.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_
  && tar xvzf spark-${SPARK_VERSION}-bin-hadoop3.tgz --directory ${SPARK_HOME} --strip-components 1 \
  && rm -rf spark-${SPARK_VERSION}-bin-hadoop3.tgz
 
-ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+ENV PATH="$SPARK_HOME/sbin:$SPARK_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:${PATH}"
 
-ENV PATH="$ZEPPELIN_HOME/bin:$SPARK_HOME/sbin:/opt/spark/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin:$HIVE_HOME/bin:${PATH}"
-
+# docker built -t kevinity310/spark-hadoop:3.4.2
