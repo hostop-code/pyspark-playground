@@ -140,6 +140,60 @@ services:
     networks:
       - hadoop-network
 
+  trino-coordinator:
+    container_name: "trino-coordinator"
+    build:
+      dockerfile: Dockerfile
+      context: ./trino/trino-coordinator
+    image: "kevinity310/trino-coordinator:435"
+    ports:
+      - "8081:8080"
+    command: 
+      - "http://trino-coordinator:8080"
+      - "coordinator"
+    networks:
+      - hadoop-network
+
+  trino-worker:
+    build:
+      dockerfile: Dockerfile
+      context: ./trino/trino-worker
+    image: "kevinity310/trino-worker:435"
+    command: 
+      - "http://trino-coordinator:8080"
+    depends_on:
+      - trino-coordinator
+    expose:
+      - 8080
+    networks:
+      - hadoop-network
+      
+  # docker compose -f docker-compose-dev.yml up  -scale trino-worker=2  -d
+  
+  # spark-master:
+  #   container_name: spark-master
+  #   image: kevinity310/spark-yarn:3.4.2
+  #   entrypoint: ['./entrypoint.sh', 'spark-master']
+  #   depends_on:
+  #     - hive-metastore
+  #   ports:
+  #     - '9083:9083' 
+  #   networks:
+  #     - hadoop-network
+  #     - 
+      
+  # spark-worker:
+  #   container_name: spark-master
+  #   image: kevinity310/spark:3
+  #   entrypoint: ['./entrypoint.sh', 'hive-server2']
+  #   depends_on:
+  #     - hive-metastore
+  #   ports:
+  #     - '9083:9083' 
+  #   networks:
+  #     - hadoop-network
+
+
 # docker compose -f docker-compose-dev.yml build
 # docker compose -f docker-compose-dev.yml up -d
 

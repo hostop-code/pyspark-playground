@@ -84,6 +84,8 @@ RUN mkdir -p $TRINO_HOME/data
 VOLUME ["$TRINO_HOME/data"]
 
 # docker build -t kevinity310/trino-base:435 .
+# docker push kevinity310/trino-base:435
+
 # docker run --rm -it kevinity310/trino-base /bin/bash
 
 # ln -s /usr/bin/python3 /usr/bin/python
