@@ -165,5 +165,3 @@ CMD ["./entrypoint.sh"]
 
 # docker compose -f docker-compose-ubuntu-standalone.yml build 
 # docker run --rm -it Dockerfile-ubuntu-standalone /bin/bash
-
-# service postgresql status
