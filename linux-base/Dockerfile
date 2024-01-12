@@ -8,13 +8,12 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 ARG HADOOP_VERSION=3.2.4
 
-# Install tools required by the OS
+
+# Common requeriments for development
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
       software-properties-common \
       sudo \
-      curl \
-      iputils-ping \
       vim \
       unzip \
       rsync \
@@ -23,11 +22,22 @@ RUN apt-get update && \
       nano \
       python3 \
       python3-pip \
+      openssh-client \
+      openssh-server \
+  && apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install tools required by the OS
+RUN echo "For Networking"
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      curl \
+      iputils-ping \
       wget \
       lsof \
       net-tools \
-      openssh-client \
-      openssh-server \
+      nmap \
+      netcat \
   && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

@@ -51,7 +51,7 @@ EXPOSE 8088
 
 # Set entry point
 # ENTRYPOINT ["./entrypoint.sh"]
-# CMD ["./entrypoint.sh"]
+CMD ["./entrypoint.sh"]
 
 # docker build -t kevinity310/hadoop-base:3.2.4 .
 # docker push kevinity310/hadoop-base:3.2.4
