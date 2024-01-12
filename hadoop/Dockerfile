@@ -43,6 +43,11 @@ RUN dos2unix entrypoint.sh && chmod +x entrypoint.sh
 # https://www.oreilly.com/library/view/big-data-analytics/9781788628846/5c5821cc-4a3d-498a-a3eb-23256cd79c8b.xhtml
 EXPOSE 9087
 EXPOSE 9000
+EXPOSE 8030
+EXPOSE 8031
+EXPOSE 8032
+EXPOSE 8033
+EXPOSE 8088
 
 # Set entry point
 # ENTRYPOINT ["./entrypoint.sh"]
