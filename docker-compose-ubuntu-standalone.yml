@@ -27,7 +27,7 @@ services:
     build:
       dockerfile: Dockerfile-ubuntu-standalone
       context: .
-    image: da-hadoop-ubuntu-standalone
+    image: kevinity310/da-hadoop-ubuntu-standalone:v1
     entrypoint: ['./entrypoint.sh', 'master']
     volumes:
       - ./book_data:/opt/spark/data
@@ -48,7 +48,7 @@ services:
 
   hive-metastore:
     container_name: hive-metastore
-    image: da-hadoop-ubuntu-standalone
+    image: kevinity310/da-hadoop-ubuntu-standalone:v1
     entrypoint: ['./entrypoint.sh', 'hive-metastore']
     depends_on:
       - master
@@ -60,7 +60,7 @@ services:
       - hadoop-network
 
   worker:
-      image: da-hadoop-ubuntu-standalone
+      image: kevinity310/da-hadoop-ubuntu-standalone:v1
       entrypoint: ['./entrypoint.sh', 'worker']
       depends_on:
         - master
@@ -76,7 +76,7 @@ services:
 
   history-server:
     container_name: history-server
-    image: da-hadoop-ubuntu-standalone
+    image: kevinity310/da-hadoop-ubuntu-standalone:v1
     entrypoint: ['./entrypoint.sh', 'history']
     depends_on:
       - master
@@ -89,7 +89,7 @@ services:
 
   jupyter:
     container_name: da-hadoop-ubuntu-standalone-jupyter
-    image: da-hadoop-ubuntu-standalone
+    image: kevinity310/da-hadoop-ubuntu-standalone:v1
     entrypoint: ['./entrypoint.sh', 'jupyter']
     depends_on:
       - master
@@ -102,7 +102,7 @@ services:
 
   zeppelin:
     container_name: zeppelin
-    image: da-hadoop-ubuntu-standalone
+    image: kevinity310/da-hadoop-ubuntu-standalone:v1
     entrypoint: ['./entrypoint.sh', 'zeppelin']
     depends_on:
       - master

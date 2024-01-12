@@ -52,11 +52,6 @@ then
   echo "Start service hiveserver2"
   ${HIVE_HOME}/bin/hive --service hiveserver2 --hiveconf hive.server2.thrift.port=10000 --hiveconf hive.root.logger=INFO,console &
 
-elif [ "$WORKLOAD" == "trino" ];
-then
-  echo "Setup Trino Master"
-  cp config-master.properties.template config.properties
-
 elif [ "$WORKLOAD" == "worker" ];
 then
   hdfs namenode -format
@@ -100,8 +95,7 @@ elif [ "$WORKLOAD" == "zeppelin" ];
 then
 
   echo "Staring Zeppelin Service"
-  # zeppelin-daemon.sh start
-  # hdfs namenode -format
+  zeppelin-daemon.sh start
 
 fi
 
