@@ -1,0 +1,45 @@
+version: '3.8'
+
+networks:
+  hadoop-network:
+    external: true
+
+services:
+  namenode:
+    container_name: namenode
+    build:
+      dockerfile: Dockerfile
+      context: ./hadoop/
+    image: kevinity310/hadoop-base:3.2.4
+    entrypoint: ['./entrypoint.sh', 'namenode']
+    volumes:
+      - ./book_data:/opt/spark/data
+      - ./spark_apps:/opt/spark/apps
+    env_file:
+      - .env.spark
+    ports:
+      - '9000:9000'
+      - '9870:9870'
+      - '8088:8088'
+    networks:
+      - hadoop-network
+
+  secondarynamenode:
+    container_name: secondarynamenode
+    image: kevinity310/hadoop-base:3.2.4
+    entrypoint: ['./entrypoint.sh', 'secondarynamenode']
+    env_file:
+      - .env.spark
+    ports:
+      - '9001:9000'
+      - '9871:9870'
+      - '8089:8088'
+      - '50090:50090'
+    networks:
+      - hadoop-network
+
+  datanode:
+    image: kevinity310/hadoop-base:3.2.4
+    entrypoint: ['./entrypoint.sh', 'datanode']
+    networks:
+      - hadoop-network
