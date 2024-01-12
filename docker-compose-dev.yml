@@ -1,0 +1,76 @@
+version: '3.8'
+
+networks:
+  hadoop-network:
+    external: true
+
+volumes:
+  namenode_data:
+  datanode_data:
+    
+services:
+  namenode:
+    container_name: namenode
+    build:
+      dockerfile: Dockerfile
+      context: ./hadoop/
+    image: kevinity310/hadoop-base:3.2.4
+    entrypoint: ['./entrypoint.sh', 'namenode']
+    volumes:
+      - ./book_data:/opt/spark/data
+      - ./spark_apps:/opt/spark/apps
+      - namenode_data:/opt/hadoop/data/dataNode
+    ports:
+      - '9000:9000'
+      - '9870:9870'
+      - '8088:8088'
+    networks:
+      - hadoop-network
+
+  secondarynamenode:
+    container_name: secondarynamenode
+    image: kevinity310/hadoop-base:3.2.4
+    entrypoint: ['./entrypoint.sh', 'secondarynamenode']
+    ports:
+      - '50090:50090'
+    networks:
+      - hadoop-network
+
+  # 1 datanode for 1 vm
+  datanode:
+    image: kevinity310/hadoop-base:3.2.4
+    entrypoint: ['./entrypoint.sh', 'datanode']
+    volumes:
+      - namenode_data:/opt/hadoop/data/dataNode
+    networks:
+      - hadoop-network
+  
+  yarn-resource-manager:
+    container_name: yarn-resource-manager
+    image: kevinity310/hadoop-base:3.2.4
+    entrypoint: ['./entrypoint.sh', 'yarn-resource-manager']
+    volumes:
+      - namenode_data:/opt/hadoop/data/dataNode
+    ports:
+      - '8030:8030' # Scheduler
+      - '8031:8031' # resource-tracker
+      - '8032:8032' # resourcemanager
+      - '8033:8033' # admin
+      - '8088:8088' # webapp
+    networks:
+      - hadoop-network
+    resources:
+      limits:
+        cpus: '4'  # Contoh: Batasi penggunaan CPU 
+        memory: 6GB  # Contoh: Batasi penggunaan memori
+
+  yarn-node-manager:
+    image: kevinity310/hadoop-base:3.2.4
+    entrypoint: ['./entrypoint.sh', 'yarn-node-manager']
+    networks:
+      - hadoop-network
+    resources:
+      limits:
+        cpus: '2' 
+        memory: 4G  
+

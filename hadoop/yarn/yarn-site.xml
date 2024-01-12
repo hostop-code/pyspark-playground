@@ -11,7 +11,7 @@
     
     <property>
         <name>yarn.resourcemanager.hostname</name>
-        <value>master</value>
+        <value>yarn-node-manager</value>
     </property>
 
     <!-- Shuffle service that needs to be set for Map Reduce applications. -->
@@ -31,12 +31,12 @@
     <!-- Amount of physical memory, in MB, that can be allocated for containers. It means the amount of memory YARN can utilize on this node and therefore this property should be lower than the total memory of that machine. -->
     <property>
         <name>yarn.nodemanager.resource.cpu-vcores</name>
-        <value>10</value>
+        <value>4</value>
     </property>
 
     <property>
         <name>yarn.nodemanager.resource.memory-mb</name>
-        <value>10240</value>
+        <value>8</value>
     </property>
 
     <!-- Resource manager can only allocate memory to containers in increments
