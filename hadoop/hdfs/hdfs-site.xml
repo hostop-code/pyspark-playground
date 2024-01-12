@@ -27,5 +27,10 @@
         <name>dfs.permissions.enabled</name>
         <value>false</value>
     </property>
+
+    <property>
+        <name>dfs.namenode.secondary.http-address</name>
+        <value>hdfs-secondarynamenode:50090</value>
+      </property>
     
 </configuration>

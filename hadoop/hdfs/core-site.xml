@@ -3,13 +3,14 @@
 <configuration>
     <property>
         <name>fs.defaultFS</name>
-        <value>hdfs://master:9000</value>
+        <value>hdfs://hdfs-namenode:9000</value>
     </property>
 
      <!-- This is where here namenode stores its metadata, and  where HDFS
     data blocks are stored as well. -->
     <property>
         <name>hadoop.tmp.dir</name>
+        <value>/tmp</value>
     </property>
 
        <!--To be able to run Hive via JDBC as root-->

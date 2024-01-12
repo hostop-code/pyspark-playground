@@ -40,14 +40,12 @@ then
 
 elif [ "$WORKLOAD" == "hive-metastore" ];
 then
-
   # Connect Hive schema (PostgreSQL)
   ${HIVE_HOME}/bin/schematool -initSchema -dbType postgres 
   
   echo "Start Hive Metastore service"
   ${HIVE_HOME}/bin/hive --service metastore &
   echo "Success running metastore on port 9083"
-
 
 elif [ "$WORKLOAD" == "trino" ];
 then
