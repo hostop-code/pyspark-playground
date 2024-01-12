@@ -111,6 +111,7 @@ services:
   
   hive-metastore:
     container_name: hive-metastore
+    hostname: hive-metastore
     build:
       dockerfile: Dockerfile
       context: ./hive/
@@ -120,6 +121,8 @@ services:
       - postgresdb
       - hdfs-namenode
       - yarn-resource-manager
+    expose:
+      - 9083
     ports:
       - '9083:9083' # Hive Metastore service
     networks:
@@ -132,8 +135,8 @@ services:
     depends_on:
       - hive-metastore
     ports:
-      - '10010:10000' # Hive Metastore Database 
-      - '10012:10002' # Hive UI
+      - '10000:10000' # Hive Metastore Database 
+      - '10002:10002' # Hive UI
     networks:
       - hadoop-network
 
