@@ -12,12 +12,12 @@ if [ "$WORKLOAD" == "hive-metastore" ]; then
 
     echo "Start Hive Metastore service"
     ${HIVE_HOME}/bin/hive --service metastore & 
-    echo "Success running metastore on port 9083"
+    # echo "Success running metastore on port 9083"
 
-    # Wait for a moment to ensure the service has started
-    echo "Before sleep"
+  # Wait for a moment to ensure the service has started
+    echo "Wait for a moment to ensure the service 'hive metastore' has started..."
     sleep 120
-    echo "After sleep"
+    echo "Checking port service 'hive metastore' is run..."
 
     # Check if the metastore service is active using netstat
     if netstat -tuln | grep ":9083" > /dev/null; then

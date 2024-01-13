@@ -8,22 +8,21 @@
 # spark.port.maxRetries 4
 # spark.history.ui.port 18080
 
-spark.master                     spark://master:7077
+spark.master                     spark://spark-master:7077
 # spark.submit.deployMode          client
 spark.driver.memory              512m
 spark.executor.memory            512m
 spark.yarn.am.memory             1G
 spark.eventLog.enabled           true
-spark.eventLog.dir               hdfs://master:8020/spark-logs
+spark.eventLog.dir               hdfs://hdfs-namenode:9000/spark-logs
 spark.history.provider           org.apache.spark.deploy.history.FsHistoryProvider
-spark.history.fs.logDirectory    hdfs://master:8020/spark-logs
-spark.yarn.historyServer.address localhost:18080
+spark.history.fs.logDirectory    hdfs://hdfs-namenode:9000/spark-logs
+# spark.yarn.historyServer.address localhost:18080
 spark.history.fs.update.interval 10s
 spark.history.ui.port            18080
 
-hive.metastore.uris                     thrift://master:9083
 spark.executor.extraJavaOptions         -XX:+UseNUMA
-spark.executor.extraLibraryPath         /opt/hadoop/lib/native
+# spark.executor.extraLibraryPath         /opt/hadoop/lib/native
 spark.history.fs.cleaner.enabled        true
 spark.history.fs.cleaner.interval       7d
 spark.history.fs.cleaner.maxAge         90d
@@ -40,14 +39,15 @@ spark.sql.broadcastTimeout              300
 spark.sql.catalogImplementation         hive
 spark.sql.hive.convertMetastoreOrc      true
 
+hive.metastore.uris                     thrift://hive-metastore:9083
 spark.sql.hive.metastore.jars           /opt/spark/jars/*
-spark.sql.hive.metastore.version        3.1.3
+spark.sql.hive.metastore.version        3.1.0
 spark.sql.orc.filterPushdown            true
 spark.sql.orc.impl                      native
 spark.sql.statistics.fallBackToHdfs     true
 spark.sql.warehouse.dir                 /warehouse/tablespace/managed/hive
 spark.unsafe.sorter.spill.reader.buffer.size 1m
-spark.yarn.queue                        default
+# spark.yarn.queue                        default
 
 # Spark with Hive
 # TODO enable when they remove HIVE_STATS_JDBC_TIMEOUT
