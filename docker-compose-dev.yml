@@ -140,59 +140,96 @@ services:
     networks:
       - hadoop-network
 
-  trino-coordinator:
-    container_name: "trino-coordinator"
-    build:
-      dockerfile: Dockerfile
-      context: ./trino/trino-coordinator
-    image: "kevinity310/trino-coordinator:435"
-    ports:
-      - "8081:8080"
-    command: 
-      - "http://trino-coordinator:8080"
-      - "coordinator"
-    networks:
-      - hadoop-network
+  # trino-coordinator:
+  #   container_name: "trino-coordinator"
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: ./trino/trino-coordinator
+  #   image: "kevinity310/trino-coordinator:435"
+  #   ports:
+  #     - "8081:8080"
+  #   command: 
+  #     - "http://trino-coordinator:8080"
+  #     - "coordinator"
+  #   networks:
+  #     - hadoop-network
 
-  trino-worker:
-    build:
-      dockerfile: Dockerfile
-      context: ./trino/trino-worker
-    image: "kevinity310/trino-worker:435"
-    command: 
-      - "http://trino-coordinator:8080"
-    depends_on:
-      - trino-coordinator
-    expose:
-      - 8080
-    networks:
-      - hadoop-network
+  # trino-worker:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: ./trino/trino-worker
+  #   image: "kevinity310/trino-worker:435"
+  #   command: 
+  #     - "http://trino-coordinator:8080"
+  #   depends_on:
+  #     - trino-coordinator
+  #   expose:
+  #     - 8080
+  #   networks:
+  #     - hadoop-network
       
   # docker compose -f docker-compose-dev.yml up  -scale trino-worker=2  -d
   
-  # spark-master:
-  #   container_name: spark-master
-  #   image: kevinity310/spark-yarn:3.4.2
-  #   entrypoint: ['./entrypoint.sh', 'spark-master']
-  #   depends_on:
-  #     - hive-metastore
-  #   ports:
-  #     - '9083:9083' 
-  #   networks:
-  #     - hadoop-network
-  #     - 
-      
-  # spark-worker:
-  #   container_name: spark-master
-  #   image: kevinity310/spark:3
-  #   entrypoint: ['./entrypoint.sh', 'hive-server2']
-  #   depends_on:
-  #     - hive-metastore
-  #   ports:
-  #     - '9083:9083' 
-  #   networks:
-  #     - hadoop-network
+  spark-master:
+    container_name: "spark-master"
+    hostname: spark-master
+    build:
+      dockerfile: Dockerfile
+      context: ./spark/standalone/
+    image: kevinity310/spark-standalone:3.4.2
+    entrypoint: ['./entrypoint.sh', 'spark-master']
+    ports:
+      - '7077:7077'
+      - '8080:8080'
+      - '4040:4040' 
+    networks:
+      - hadoop-network
 
+  spark-history-server:
+    container_name: "spark-history-server"
+    hostname: spark-history-server
+    image: kevinity310/spark-standalone:3.4.2
+    entrypoint: ['./entrypoint.sh', 'spark-history-server']
+    depends_on:
+      - spark-master
+    ports:
+      - '18080:18080'
+    networks:
+      - hadoop-network
+      
+  spark-worker:
+    image: kevinity310/spark-standalone:3.4.2
+    entrypoint: ['./entrypoint.sh', 'spark-worker']
+    depends_on:
+      - spark-master
+    ports:
+      - '8181:8081'
+    networks:
+      - hadoop-network
+    deploy:
+      resources:
+        limits:
+          cpus: '4'  # Set the desired CPU limit 
+          memory: '4G'  # Set the desired memory limit 
+
+  jupyterhub:
+    container_name: "jupyterhub"
+    hostname: jupyterhub
+    build:
+      dockerfile: Dockerfile
+      context: ./jupyterhub/
+    image: kevinity310/jupyterhub:latest
+    entrypoint: ['./entrypoint.sh', 'jupyterhub']
+    ports:
+      - '8181:8081'
+    networks:
+      - hadoop-network
+    deploy:
+      resources:
+        limits:
+          cpus: '4'  # Set the desired CPU limit 
+          memory: '4G'  # Set the desired memory limit 
+  
 
 # docker compose -f docker-compose-dev.yml build
 # docker compose -f docker-compose-dev.yml up -d
