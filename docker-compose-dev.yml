@@ -140,33 +140,39 @@ services:
     networks:
       - hadoop-network
 
-  # trino-coordinator:
-  #   container_name: "trino-coordinator"
-  #   build:
-  #     dockerfile: Dockerfile
-  #     context: ./trino/trino-coordinator
-  #   image: "kevinity310/trino-coordinator:435"
-  #   ports:
-  #     - "8081:8080"
-  #   command: 
-  #     - "http://trino-coordinator:8080"
-  #     - "coordinator"
-  #   networks:
-  #     - hadoop-network
+  trino-coordinator:
+    container_name: "trino-coordinator"
+    build:
+      dockerfile: Dockerfile
+      context: ./trino/trino-coordinator
+    image: "kevinity310/trino-coordinator:435"
+    ports:
+      - "8081:8080"
+    command: 
+      - "http://trino-coordinator:8080"
+      - "coordinator"
+    networks:
+      - hadoop-network
 
-  # trino-worker:
-  #   build:
-  #     dockerfile: Dockerfile
-  #     context: ./trino/trino-worker
-  #   image: "kevinity310/trino-worker:435"
-  #   command: 
-  #     - "http://trino-coordinator:8080"
-  #   depends_on:
-  #     - trino-coordinator
-  #   expose:
-  #     - 8080
-  #   networks:
-  #     - hadoop-network
+  trino-worker:
+    build:
+      dockerfile: Dockerfile
+      context: ./trino/trino-worker
+    image: "kevinity310/trino-worker:435"
+    command: 
+      - "http://trino-coordinator:8080"
+    depends_on:
+      - trino-coordinator
+    expose:
+      - 8080
+    networks:
+      - hadoop-network
+    deploy:
+      replicas: 3  # Set the desired number of replicas
+      resources:
+        limits:
+          cpus: '4'  # Set the desired CPU limit 
+          memory: '4G'  # Set the desired memory limit 
       
   # docker compose -f docker-compose-dev.yml up  -scale trino-worker=2  -d
   
@@ -202,11 +208,12 @@ services:
     entrypoint: ['./entrypoint.sh', 'spark-worker']
     depends_on:
       - spark-master
-    ports:
-      - '8181:8081'
+    # ports:
+    #   - '8181:8081'
     networks:
       - hadoop-network
     deploy:
+      replicas: 3
       resources:
         limits:
           cpus: '4'  # Set the desired CPU limit 
@@ -221,7 +228,7 @@ services:
     image: kevinity310/jupyterhub:latest
     entrypoint: ['./entrypoint.sh', 'jupyterhub']
     ports:
-      - '8181:8081'
+      - '8181:8000'
     networks:
       - hadoop-network
     deploy:
