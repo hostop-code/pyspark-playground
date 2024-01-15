@@ -22,30 +22,33 @@ fi
 
 if [ "$WORKLOAD" == "datanode" ]; then
   hdfs namenode -format -nonInteractive
+
+  
   # start the worker node processes
+  echo "Start Datanode"
   hdfs --daemon start datanode
 
-  # Create required directories if not exist
-  while ! hdfs dfs -test -d /spark-logs; do
-    hdfs dfs -mkdir /spark-logs
-    echo "Created /spark-logs hdfs dir"
-  done
+  # # Create required directories if not exist
+  # while ! hdfs dfs -test -d /spark-logs; do
+  #   hdfs dfs -mkdir /spark-logs
+  #   echo "Created /spark-logs hdfs dir"
+  # done
 
-  while ! hdfs dfs -test -d /sample_data; do
-    hdfs dfs -mkdir /sample_data
-    echo "Created /sample_data/ hdfs dir"
-  done
+  # while ! hdfs dfs -test -d /sample_data; do
+  #   hdfs dfs -mkdir /sample_data
+  #   echo "Created /sample_data/ hdfs dir"
+  # done
 
-  # Check if /sample_data is empty before copying
-  if [ "$(hdfs dfs -count /sample_data | awk '{print $2}')" -eq 0 ]; then
-    # Copy the data to the data HDFS directory
-    hdfs dfs -copyFromLocal /opt/spark/data/* /sample_data
-    echo "Copied data to /sample_data"
-  else
-    echo "/sample_data already contains data. Skipping copy."
-  fi
+  # # Check if /sample_data is empty before copying
+  # if [ "$(hdfs dfs -count /sample_data | awk '{print $2}')" -eq 0 ]; then
+  #   # Copy the data to the data HDFS directory
+  #   hdfs dfs -copyFromLocal /opt/spark/data/* /sample_data
+  #   echo "Copied data to /sample_data"
+  # else
+  #   echo "/sample_data already contains data. Skipping copy."
+  # fi
 
-  hdfs dfs -ls /sample_data
+  # hdfs dfs -ls /sample_data
 
   # For HIVE
   hdfs dfs -mkdir -p /warehouse/tablespace/managed/hive
