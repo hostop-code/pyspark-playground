@@ -59,7 +59,12 @@ RUN echo "jupyter:jupyter" | chpasswd
 
 RUN usermod -aG sudo jupyter
 
-USER jupyter
+# Copy entrypoint script
+COPY entrypoint_jupyter.sh entrypoint.sh
+
+RUN dos2unix entrypoint.sh && chmod +x entrypoint.sh
+
+EXPOSE 8000
 
 # docker build -t kevinity310/jupyterhub:latest .
 # docker run --rm -it -p 8999:8000 kevinity310/jupyterhub:latest /bin/bash

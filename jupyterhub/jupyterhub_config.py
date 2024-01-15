@@ -1,11 +1,11 @@
 # Configuration file for jupyterhub.
 
+c = get_config()  #noqa
 
-c.JupyterHub.port = 80
+
+# c.JupyterHub.port = 80
 c.Authenticator.admin_users = {'jupyter'}
 c.Authenticator.allowed_users = {'anthony', 'brenda', 'cory'}
-
-c = get_config()  #noqa
 #------------------------------------------------------------------------------
 # Application(SingletonConfigurable) configuration
 #------------------------------------------------------------------------------
@@ -1046,7 +1046,7 @@ c.JupyterHub.port = 8000
 #  process's environment (such as `CONFIGPROXY_AUTH_TOKEN`) is not passed to the
 #  single-user server's process.
 #  Default: ['PATH', 'PYTHONPATH', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 'LANG', 'LC_ALL', 'JUPYTERHUB_SINGLEUSER_APP']
-# c.Spawner.env_keep = ['PATH', 'PYTHONPATH', 'CONDA_ROOT', 'CONDA_DEFAULT_ENV', 'VIRTUAL_ENV', 'LANG', 'LC_ALL', 'JUPYTERHUB_SINGLEUSER_APP']
+# c.Spawner.env_keep = ['LC_ALL', 'JUPYTERHUB_SINGLEUSER_APP']
 
 ## Extra environment variables to set for the single-user server's process.
 #  
@@ -1071,7 +1071,21 @@ c.JupyterHub.port = 8000
 #      allowing override of 'default' env variables,
 #      such as JUPYTERHUB_API_URL.
 #  Default: {}
-# c.Spawner.environment = {}
+c.Spawner.environment = {
+    'HDFS_DATANODE_USER': 'root',
+    'JAVA_HOME': '/usr/lib/jvm/java-8-openjdk-amd64',
+    'YARN_NODEMANAGER_USER': 'root',
+    'YARN_RESOURCEMANAGER_USER': 'root',
+    'HDFS_SECONDARYNAMENODE_USER': 'root',
+    'PYTHONPATH': '/opt/spark/python/',
+    'HADOOP_CONF_DIR': '/opt/hadoop/etc/hadoop',
+    'HADOOP_HOME': '/opt/hadoop',
+    'SPARK_HOME': '/opt/spark',
+    'HDFS_NAMENODE_USER': 'root',
+    'JUPYTER_HOME': '/opt/jupyter',
+    'LD_LIBRARY_PATH': '/opt/hadoop/lib/native:',
+    'PATH': '/opt/spark/sbin:/opt/spark/bin:/opt/hadoop/bin:/opt/hadoop/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+}
 
 ## Timeout (in seconds) before giving up on a spawned HTTP server
 #  
@@ -1356,7 +1370,7 @@ c.JupyterHub.port = 8000
 #  .. versionchanged:: 1.2
 #      `Authenticator.whitelist` renamed to `allowed_users`
 #  Default: set()
-# c.Authenticator.allowed_users = set()
+# c.Authenticator.allowed_users = set('jupyter')
 
 ## The max age (in seconds) of authentication info
 #          before forcing a refresh of user auth info.
@@ -1379,7 +1393,7 @@ c.JupyterHub.port = 8000
 #  
 #          .. versionadded:: 0.8
 #  Default: False
-# c.Authenticator.auto_login = False
+# c.Authenticator.auto_login = True
 
 ## Automatically begin login process for OAuth2 authorization requests
 #  
@@ -1424,7 +1438,7 @@ c.JupyterHub.port = 8000
 #          and a warning will be issued.
 #          This is the default to avoid data loss due to config changes.
 #  Default: False
-# c.Authenticator.delete_invalid_users = False
+# c.Authenticator.delete_invalid_users = True
 
 ## Enable persisting auth_state (if available).
 #  
