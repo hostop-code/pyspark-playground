@@ -34,6 +34,8 @@ ENV YARN_NODEMANAGER_USER="root"
 ADD hdfs/*.xml $HADOOP_HOME/etc/hadoop/
 ADD yarn/*.xml $HADOOP_HOME/etc/hadoop/
 
+# Upload sample data
+
 # Copy entrypoint script
 COPY entrypoint.sh entrypoint.sh
 RUN dos2unix entrypoint.sh && chmod +x entrypoint.sh

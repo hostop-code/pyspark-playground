@@ -38,8 +38,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '4'  # Set the desired CPU limit (e.g., half of a core)
-          memory: '6G'
+          cpus: '2'  # Set the desired CPU limit (e.g., half of a core)
+          memory: '4G'
 
   hdfs-datanode:
     image: kevinity310/hadoop-base:3.2.4
