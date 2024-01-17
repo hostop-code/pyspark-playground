@@ -28,26 +28,25 @@ if [ "$WORKLOAD" == "datanode" ]; then
   echo "Start Datanode"
   hdfs --daemon start datanode
 
-  # # Create required directories if not exist
-  # while ! hdfs dfs -test -d /spark-logs; do
-  #   hdfs dfs -mkdir /spark-logs
-  #   echo "Created /spark-logs hdfs dir"
-  # done
+  # Create required directories if not exist
+  while ! hdfs dfs -test -d /spark-logs; do
+    hdfs dfs -mkdir /spark-logs
+    echo "Created /spark-logs hdfs dir"
+  done
 
-  # while ! hdfs dfs -test -d /sample_data; do
-  #   hdfs dfs -mkdir /sample_data
-  #   echo "Created /sample_data/ hdfs dir"
-  # done
+  while ! hdfs dfs -test -d /sample_data; do
+    hdfs dfs -mkdir /sample_data
+    echo "Created /sample_data/ hdfs dir"
+  done
 
-  # # Check if /sample_data is empty before copying
-  # if [ "$(hdfs dfs -count /sample_data | awk '{print $2}')" -eq 0 ]; then
-  #   # Copy the data to the data HDFS directory
-  #   hdfs dfs -copyFromLocal /opt/spark/data/* /sample_data
-  #   echo "Copied data to /sample_data"
-  # else
-  #   echo "/sample_data already contains data. Skipping copy."
-  # fi
-
+  # Check if /sample_data is empty before copying
+  if [ "$(hdfs dfs -count /sample_data | awk '{print $2}')" -eq 0 ]; then
+    # Copy the data to the data HDFS directory
+    hdfs dfs -copyFromLocal /tmp/sample_data/* /sample_data
+    echo "Copied data to /sample_data"
+  else
+    echo "/sample_data already contains data. Skipping copy."
+  fi
   # hdfs dfs -ls /sample_data
 
   # For HIVE
@@ -68,6 +67,7 @@ if [ "$WORKLOAD" == "yarn-node-manager" ]; then
 
   # Activate yarn node manager
   yarn --daemon start nodemanager
+
 fi
 
 if [ "$WORKLOAD" == "hive-metastore" ]; then
@@ -99,17 +99,6 @@ if [ "$WORKLOAD" == "history" ]; then
 
   # Start the Spark history server
   start-history-server.sh
-fi
-
-if [ "$WORKLOAD" == "jupyter" ]; then
-  echo "Setup Jupyter Lab"
-  jupyter-lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token='2wsx1qaz' --NotebookApp.password='2wsx1qaz' --notebook-dir=/opt/jupyter
-fi
-
-if [ "$WORKLOAD" == "zeppelin" ]; then
-  echo "Starting Zeppelin Service"
-  # zeppelin-daemon.sh start
-  # hdfs namenode -format
 fi
 
 tail -f /dev/null

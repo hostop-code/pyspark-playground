@@ -27,14 +27,12 @@ ENV HDFS_SECONDARYNAMENODE_USER="root"
 ENV YARN_RESOURCEMANAGER_USER="root"
 ENV YARN_NODEMANAGER_USER="root"
 
-# Add JAVA_HOME to hadoop-env.sh
-# RUN echo "export JAVA_HOME=${JAVA_HOME}" >> "$HADOOP_HOME/etc/hadoop/hadoop-env.sh"
-
 # Copy configuration files
 ADD hdfs/*.xml $HADOOP_HOME/etc/hadoop/
 ADD yarn/*.xml $HADOOP_HOME/etc/hadoop/
 
 # Upload sample data
+ADD sample_data/* /tmp/sample_data
 
 # Copy entrypoint script
 COPY entrypoint.sh entrypoint.sh
@@ -43,6 +41,7 @@ RUN dos2unix entrypoint.sh && chmod +x entrypoint.sh
 
 
 # https://www.oreilly.com/library/view/big-data-analytics/9781788628846/5c5821cc-4a3d-498a-a3eb-23256cd79c8b.xhtml
+
 EXPOSE 9087
 EXPOSE 9000
 EXPOSE 8030
