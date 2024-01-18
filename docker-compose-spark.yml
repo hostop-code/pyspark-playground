@@ -1,0 +1,56 @@
+version: '3.8'
+
+networks:
+  hadoop-network:
+    external: true
+    
+services:
+  spark-master:
+    container_name: "spark-master"
+    hostname: spark-master
+    build:
+      dockerfile: Dockerfile
+      context: ./spark/standalone/
+    image: kevinity310/spark-standalone:3.4.2
+    entrypoint: ['./entrypoint.sh', 'spark-master']
+    ports:
+      - '7077:7077' # Spark Master
+      - '8080:8080' # Spark Master UI
+    networks:
+      - hadoop-network
+
+  spark-history-server:
+    container_name: "spark-history-server"
+    hostname: spark-history-server
+    image: kevinity310/spark-standalone:3.4.2
+    entrypoint: ['./entrypoint.sh', 'spark-history-server']
+    depends_on:
+      - spark-master
+    ports:
+      - '18080:18080'
+    networks:
+      - hadoop-network
+      
+  spark-worker:
+    image: kevinity310/spark-standalone:3.4.2
+    entrypoint: ['./entrypoint.sh', 'spark-worker']
+    depends_on:
+      - spark-master
+    # ports:
+    #   - '8181:8081'
+    networks:
+      - hadoop-network
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '2'  # Set the desired CPU limit 
+          memory: '4G'  # Set the desired memory limit 
+
+# docker compose -f docker-compose-dev.yml build
+# docker compose -f docker-compose-dev.yml up -d
+
+  
+
+
+

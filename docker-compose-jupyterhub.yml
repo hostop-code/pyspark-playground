@@ -1,0 +1,35 @@
+version: '3.8'
+
+networks:
+  hadoop-network:
+    external: true
+
+volumes:
+  jupyter-data:
+    
+services:
+  jupyterhub:
+    container_name: "jupyterhub"
+    hostname: jupyterhub
+    build:
+      dockerfile: Dockerfile
+      context: ./jupyterhub/
+    image: kevinity310/jupyterhub:latest
+    entrypoint: ['./entrypoint.sh', 'jupyterhub']
+    ports:
+      - '8181:8000'
+    networks:
+      - hadoop-network
+    deploy:
+      resources:
+        limits:
+          cpus: '2'  # Set the desired CPU limit 
+          memory: '4G'  # Set the desired memory limit 
+  
+# docker compose -f docker-compose-dev.yml build
+# docker compose -f docker-compose-dev.yml up -d
+
+  
+
+
+

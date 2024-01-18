@@ -26,6 +26,10 @@ RUN chmod u+x $SPARK_HOME/sbin/* && \
 
 ENV PYTHONPATH=$SPARK_HOME/python/:$PYTHONPATH
 
+# Install Python dependencies
+COPY requirements.txt requirements.txt
+RUN pip3 install -r requirements.txt
+
 # Copy entrypoint script
 COPY entrypoint-spark.sh entrypoint.sh
 
@@ -36,6 +40,6 @@ EXPOSE 18080
 EXPOSE 4040
 
 # docker build -t kevinity310/spark-standalone:3.4.2 .
+# docker push kevinity310/spark-standalone:3.4.2 
 # docker run --rm -it kevinity310/spark-standalone:3.4.2 /bin/bash
-# docker push kevinity310/ubuntu22.04:v1 
 
