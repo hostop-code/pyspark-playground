@@ -32,13 +32,12 @@ ADD hdfs/*.xml $HADOOP_HOME/etc/hadoop/
 ADD yarn/*.xml $HADOOP_HOME/etc/hadoop/
 
 # Upload sample data
-ADD sample_data/* /tmp/sample_data
+ADD sample_data/* /tmp/sample_data/
+ADD sample_data/ReferenceTables/* /tmp/sample/ReferenceTables/
 
 # Copy entrypoint script
 COPY entrypoint.sh entrypoint.sh
 RUN dos2unix entrypoint.sh && chmod +x entrypoint.sh
-
-
 
 # https://www.oreilly.com/library/view/big-data-analytics/9781788628846/5c5821cc-4a3d-498a-a3eb-23256cd79c8b.xhtml
 
@@ -51,13 +50,11 @@ EXPOSE 8033
 EXPOSE 8088
 
 # Set entry point
-# ENTRYPOINT ["./entrypoint.sh"]
-CMD ["./entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
 
 # docker build -t kevinity310/hadoop-base:3.2.4 .
-# docker push kevinity310/hadoop-base:3.2.4
 
-# docker compose -f docker-compose-dev.yml build 
 # docker run --rm -it kevinity310/hadoop-base:3.2.4 /bin/bash
+# docker push kevinity310/hadoop-base:3.2.4
 
 # docker compose -f docker-compose-dev.yml build

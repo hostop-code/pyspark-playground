@@ -66,10 +66,6 @@ COPY ssh_config ~/.ssh/config
 
 EXPOSE 22
 
-# Set entry point
-# ENTRYPOINT ["./entrypoint.sh"]
-# CMD ["./entrypoint.sh"]
-
 # docker build -t kevinity310/ubuntu22.04:v1 .
 # docker run --rm -it kevinity310/ubuntu22.04:v1 /bin/bash
 # docker push kevinity310/ubuntu22.04:v1 

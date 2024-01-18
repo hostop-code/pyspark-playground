@@ -6,37 +6,48 @@ echo "WORKLOAD: $WORKLOAD"
 
 /etc/init.d/ssh start
 
+check_error() {
+  if [ $? -ne 0 ]; then
+    echo "Error occurred. Exiting..."
+    exit 1
+  fi
+}
+
 if [ "$WORKLOAD" == "namenode" ]; then
   hdfs namenode -format -nonInteractive
 
   # Start the master node processes
   hdfs --daemon start namenode
-
+  check_error
 fi
 
 if [ "$WORKLOAD" == "secondarynamenode" ]; then
-  echo "sleep 60 minute"
+  echo "sleep 60 minutes"
   sleep 60
   hdfs --daemon start secondarynamenode
+  check_error
 fi
 
 if [ "$WORKLOAD" == "datanode" ]; then
-  hdfs namenode -format -nonInteractive
+  hdfs datanode -format -nonInteractive
+  # check_error
 
-  
   # start the worker node processes
   echo "Start Datanode"
   hdfs --daemon start datanode
+  # check_error
 
   # Create required directories if not exist
   while ! hdfs dfs -test -d /spark-logs; do
     hdfs dfs -mkdir /spark-logs
     echo "Created /spark-logs hdfs dir"
+    # check_error
   done
 
   while ! hdfs dfs -test -d /sample_data; do
     hdfs dfs -mkdir /sample_data
     echo "Created /sample_data/ hdfs dir"
+    # check_error
   done
 
   # Check if /sample_data is empty before copying
@@ -44,61 +55,47 @@ if [ "$WORKLOAD" == "datanode" ]; then
     # Copy the data to the data HDFS directory
     hdfs dfs -copyFromLocal /tmp/sample_data/* /sample_data
     echo "Copied data to /sample_data"
+    hdfs dfs -chmod -R a+r /sample_data
+    # check_error
   else
     echo "/sample_data already contains data. Skipping copy."
   fi
-  # hdfs dfs -ls /sample_data
+
+  # Create required directories if not exist
+  while ! hdfs dfs -test -d /spark-logs; do
+    hdfs dfs -mkdir /spark-logs
+    echo "Created /spark-logs hdfs dir"
+    # check_error
+  done
 
   # For HIVE
-  hdfs dfs -mkdir -p /warehouse/tablespace/managed/hive
-  hdfs dfs -chmod -R 775 /warehouse
-  # hdfs dfs -chown -R hive:hadoop /hive
-  echo "Created /warehouse/tablespace/managed/hive hdfs dir"
+  while ! hdfs dfs -test -d /warehouse/tablespace/managed/hive; do
+    hdfs dfs -mkdir -p /warehouse/tablespace/managed/hive
+    hdfs dfs -chmod -R 775 /warehouse
+    echo "Created /warehouse/tablespace/managed/hive hdfs dir"
+  done
+  # check_error
 fi
 
 if [ "$WORKLOAD" == "yarn-resource-manager" ]; then
-
-  # Activate yarn resourcemanager
+  # Activate YARN ResourceManager
   yarn --daemon start resourcemanager
-
+  if [ $? -eq 0 ]; then
+    echo "YARN ResourceManager started successfully."
+  else
+    echo "Error starting YARN ResourceManager. Exiting..."
+    exit 1
+  fi
 fi
 
 if [ "$WORKLOAD" == "yarn-node-manager" ]; then
-
-  # Activate yarn node manager
+  # Activate YARN NodeManager
   yarn --daemon start nodemanager
-
+  if [ $? -eq 0 ]; then
+    echo "YARN NodeManager started successfully."
+  else
+    echo "Error starting YARN NodeManager. Exiting..."
+    exit 1
+  fi
 fi
-
-if [ "$WORKLOAD" == "hive-metastore" ]; then
-  # Connect Hive schema (PostgreSQL)
-  ${HIVE_HOME}/bin/schematool -initSchema -dbType postgres 
-  
-  echo "Start Hive Metastore service"
-  ${HIVE_HOME}/bin/hive --service metastore &
-  echo "Success running metastore on port 9083"
-fi
-
-if [ "$WORKLOAD" == "worker" ]; then
-  hdfs namenode -format
-  # Start the worker node processes
-  hdfs --daemon start datanode
-  # yarn --daemon start nodemanager
-
-  start-worker.sh spark://master:7077
-
-  cp config-worker.properties.template config.properties
-fi
-
-if [ "$WORKLOAD" == "history" ]; then
-  while ! hdfs dfs -test -d /spark-logs; do
-    echo "spark-logs doesn't exist yet... retrying"
-    sleep 1
-  done
-  echo "Exit loop"
-
-  # Start the Spark history server
-  start-history-server.sh
-fi
-
 tail -f /dev/null

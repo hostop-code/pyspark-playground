@@ -1,0 +1,77 @@
+version: '3.8'
+
+networks:
+  hadoop-network:
+    external: true
+
+services:
+  hdfs-namenode:
+    container_name: hdfs-namenode
+    hostname: hdfs-namenode
+    build:
+      dockerfile: Dockerfile
+      context: ./hadoop/
+    image: kevinity310/hadoop-base:3.2.4
+    entrypoint: ['./entrypoint.sh', 'namenode']
+    ports:
+      - '9000:9000'
+      - '9870:9870'
+    networks:
+      - hadoop-network
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:9870"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  hdfs-secondarynamenode:
+    container_name: hdfs-secondarynamenode
+    hostname: hdfs-secondarynamenode
+    image: kevinity310/hadoop-base:3.2.4
+    entrypoint: ['./entrypoint.sh', 'secondarynamenode']
+    ports:
+      - '50090:50090'
+    depends_on:
+      hdfs-namenode:
+        condition: service_healthy
+    networks:
+      - hadoop-network
+    deploy:
+      resources:
+        limits:
+          cpus: '2'  # Set the desired CPU limit (e.g., half of a core)
+          memory: '2G'
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:50090"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  hdfs-datanode:
+    image: kevinity310/hadoop-base:3.2.4
+    entrypoint: ['./entrypoint.sh', 'datanode']
+    expose:
+      - 9864
+    depends_on:
+      hdfs-namenode:
+        condition: service_healthy
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '2'  # Set the desired CPU limit
+          memory: '2G'
+    networks:
+      - hadoop-network
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:9864"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+# Add the volume definition if needed
+
+# docker compose -f docker-compose-dev.yml build
+# docker compose -f docker-compose-dev.yml up -d
+
+# docker compose -f docker-compose-hadoop.yml build
