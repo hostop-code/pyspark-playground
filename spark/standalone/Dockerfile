@@ -35,9 +35,10 @@ COPY entrypoint-spark.sh entrypoint.sh
 
 RUN dos2unix entrypoint.sh && chmod +x entrypoint.sh
 
-EXPOSE 7077
-EXPOSE 18080
-EXPOSE 4040
+# EXPOSE 7077
+# EXPOSE 18080
+# EXPOSE 4040
+# EXPOSE 7337
 
 # docker build -t kevinity310/spark-standalone:3.4.2 .
 # docker push kevinity310/spark-standalone:3.4.2 

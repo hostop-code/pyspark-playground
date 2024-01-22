@@ -62,11 +62,11 @@ elif [ "$WORKLOAD" == "spark-worker" ]; then
     sleep 30
 
     # Check if the spark-worker service is active using netstat
-    # if netstat -tuln | grep ":4040" > /dev/null; then
-    #     echo "spark-worker service is active on port 10000."
-    # else
-    #     echo "spark-worker service is not active on port 10000."
-    # fi
+    if netstat -tuln | grep ":4040" > /dev/null; then
+        echo "spark-worker service is active on port 4040."
+    else
+        echo "spark-worker service is not active on port 4040."
+    fi
 
 elif [ "$WORKLOAD" == "spark-history-server" ]; then
 
@@ -103,13 +103,15 @@ elif [ "$WORKLOAD" == "spark-history-server" ]; then
     # done
     # echo "Exit loop"
 
+    echo "Wait 60 second service preparing..."
+    sleep 60
+    echo "Starting service spark history server..."
     # start the spark history server
     start-history-server.sh
-    
     # Sleep for 30 seconds
     sleep 30
 
-    Check if the Spark History Server service is active using netstat
+    # Check if the Spark History Server service is active using netstat
     if netstat -tuln | grep ":18080" > /dev/null; then
         echo "Spark History Server service is active on port 18080."
     else
