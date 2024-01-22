@@ -25,12 +25,13 @@ RUN apt-get update && \
     openssh-client \
     && apt-get clean 
     
-RUN echo "INSTALING wget & net-tools🛜"
+RUN echo "INSTALING tools for network🛜"
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
       wget \
       net-tools \
-    && apt-get clean 
+      lsof \
+  && apt-get clean 
 
 # Package for support setup trino
 RUN apt-get update && \

@@ -11,7 +11,6 @@ WORKDIR ${TRINO_HOME}
 
 ENTRYPOINT ["./scripts/trino.sh"]
 
-
 # docker build -t kevinity310/trino-coordinator:435 .
 # docker run --rm -it kevinity310/trino-coordinator:435 /bin/bash
 # docker run --name coordinator --rm -p 8181:8080 -it kevinity310/trino-coordinator:435 /bin/bash

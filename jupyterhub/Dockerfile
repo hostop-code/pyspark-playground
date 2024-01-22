@@ -25,6 +25,10 @@ RUN chmod u+x $SPARK_HOME/sbin/* && \
 
 ENV PYTHONPATH=$SPARK_HOME/python/:$PYTHONPATH
 
+ADD requirements.txt requirements.txt
+
+RUN pip3 install -r requirements.txt
+
 FROM spark_base as jupyterhub_base
 
 # Intalling Jupyterhub base doc : https://jupyterhub.readthedocs.io/en/stable/tutorial/quickstart.html
@@ -44,7 +48,7 @@ WORKDIR $JUPYTER_HOME
 # Make python3 can run pyhton
 # RUN ln -s /usr/bin/python3 /usr/bin/python
 
-RUN pip install jupyterhub
+RUN pip install jupyterhub==4.0.2
 RUN npm install -g configurable-http-proxy
 RUN python3 -m pip install jupyterlab notebook
 
@@ -59,6 +63,7 @@ RUN echo "jupyter:jupyter" | chpasswd
 
 RUN usermod -aG sudo jupyter
 
+
 # Copy entrypoint script
 COPY entrypoint_jupyter.sh entrypoint.sh
 
@@ -66,5 +71,6 @@ RUN dos2unix entrypoint.sh && chmod +x entrypoint.sh
 
 EXPOSE 8000
 
-# docker build -t kevinity310/jupyterhub:latest .
+# docker build -t kevinity310/jupyterhub:4.0.2 .
+# docker push kevinity310/jupyterhub:4.0.2 
 # docker run --rm -it -p 8999:8000 kevinity310/jupyterhub:latest /bin/bash

@@ -16,17 +16,17 @@ services:
       context: ./trino/trino-coordinator
     image: "kevinity310/trino-coordinator:435"
     ports:
-      - "8081:8080"
+      - "8080:8080"
     command: 
       - "http://trino-coordinator:8080"
       - "coordinator"
     networks:
       - hadoop-network
-    # healthcheck:
-    #   test: ["CMD-SHELL", "(lsof -i :8080 && exit 0) || exit 1"]
-    #   interval: 15s
-    #   timeout: 10s
-    #   retries: 5
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   trino-worker:
     build:
@@ -48,6 +48,13 @@ services:
         limits:
           cpus: '2'  # Set the desired CPU limit 
           memory: '2G'  # Set the desired memory limit 
+    healthcheck:
+      test: 
+        - "CMD-SHELL"
+        - "netstat -an | grep LISTEN | grep 8080"
+      interval: 10s
+      timeout: 5s
+      retries: 3
       
 # docker compose -f docker-compose-dev.yml up  -scale trino-worker=2  -d
   
