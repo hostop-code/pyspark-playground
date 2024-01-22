@@ -13,6 +13,7 @@ check_error() {
   fi
 }
 
+
 if [ "$WORKLOAD" == "namenode" ]; then
   hdfs namenode -format -nonInteractive
 
@@ -21,61 +22,95 @@ if [ "$WORKLOAD" == "namenode" ]; then
   check_error
 fi
 
+
+
 if [ "$WORKLOAD" == "secondarynamenode" ]; then
-  echo "sleep 60 minutes"
-  sleep 60
+  echo "Waiting for 'hdfs-namenode' to be ready before connecting."
+
+  check_hdfs_namenode_connection() {
+      nc -zv hdfs-namenode 9000
+  }
+
+  # Loop to check the connection until it becomes active
+  max_attempts=10
+
+  for attempt in $(seq $max_attempts); do
+      if check_hdfs_namenode_connection; then
+          echo "Connection to 'hdfs-namenode' on port 9000 is active."
+          break
+      else
+          echo "Attempt $attempt: Connection to 'hdfs-namenode' on port 9000 is not active. Retrying..."
+          sleep 10  # Wait for 10 seconds before the next attempt
+      fi
+  done
+
+  # sleep 60
   hdfs --daemon start secondarynamenode
-  check_error
+  
+else
+  echo "Unknown workload: $WORKLOAD"
 fi
 
 if [ "$WORKLOAD" == "datanode" ]; then
-  hdfs datanode -format -nonInteractive
-  # check_error
+    echo "Waiting for 'hdfs-namenode' to be ready before connecting."
 
-  # start the worker node processes
-  echo "Start Datanode"
-  hdfs --daemon start datanode
-  # check_error
+    check_hdfs_namenode_connection() {
+        nc -zv hdfs-namenode 9000
+    }
 
-  # Create required directories if not exist
-  while ! hdfs dfs -test -d /spark-logs; do
-    hdfs dfs -mkdir /spark-logs
-    echo "Created /spark-logs hdfs dir"
-    # check_error
-  done
+    # Loop to check the connection until it becomes active
+    max_attempts=10
 
-  while ! hdfs dfs -test -d /sample_data; do
-    hdfs dfs -mkdir /sample_data
-    echo "Created /sample_data/ hdfs dir"
-    # check_error
-  done
+    for attempt in $(seq $max_attempts); do
+        if check_hdfs_namenode_connection; then
+            echo "Connection to 'hdfs-namenode' on port 9000 is active."
+            break
+        else
+            echo "Attempt $attempt: Connection to 'hdfs-namenode' on port 9000 is not active. Retrying..."
+            sleep 10  # Wait for 10 seconds before the next attempt
+        fi
+    done
 
-  # Check if /sample_data is empty before copying
-  if [ "$(hdfs dfs -count /sample_data | awk '{print $2}')" -eq 0 ]; then
-    # Copy the data to the data HDFS directory
-    hdfs dfs -copyFromLocal /tmp/sample_data/* /sample_data
-    echo "Copied data to /sample_data"
-    hdfs dfs -chmod -R a+r /sample_data
-    # check_error
-  else
-    echo "/sample_data already contains data. Skipping copy."
-  fi
+    hdfs datanode -format -nonInteractive
 
-  # Create required directories if not exist
-  while ! hdfs dfs -test -d /spark-logs; do
-    hdfs dfs -mkdir /spark-logs
-    echo "Created /spark-logs hdfs dir"
-    # check_error
-  done
+    # Start the worker node processes
+    echo "Starting Datanode"
+    hdfs --daemon start datanode
 
-  # For HIVE
-  while ! hdfs dfs -test -d /warehouse/tablespace/managed/hive; do
-    hdfs dfs -mkdir -p /warehouse/tablespace/managed/hive
+    # Create required directories if not exist
+    create_hdfs_directory() {
+        local dir=$1
+        while ! hdfs dfs -test -d "$dir"; do
+            hdfs dfs -mkdir "$dir"
+            echo "Created $dir hdfs dir"
+            # check_error
+        done
+    }
+
+    create_hdfs_directory "/spark-logs"
+    create_hdfs_directory "/sample_data"
+
+    # Check if /sample_data is empty before copying
+    if [ "$(hdfs dfs -count /sample_data | awk '{print $2}')" -eq 0 ]; then
+        # Copy the data to the data HDFS directory
+        hdfs dfs -copyFromLocal /tmp/sample_data/* /sample_data
+        echo "Copied data to /sample_data"
+        hdfs dfs -chmod -R a+r /sample_data
+        # check_error
+    else
+        echo "/sample_data already contains data. Skipping copy."
+    fi
+
+    create_hdfs_directory "/spark-logs"
+
+    # For HIVE
+    create_hdfs_directory "/warehouse/tablespace/managed/hive"
     hdfs dfs -chmod -R 775 /warehouse
+
     echo "Created /warehouse/tablespace/managed/hive hdfs dir"
-  done
-  # check_error
+    # check_error
 fi
+
 
 if [ "$WORKLOAD" == "yarn-resource-manager" ]; then
   # Activate YARN ResourceManager
@@ -87,6 +122,7 @@ if [ "$WORKLOAD" == "yarn-resource-manager" ]; then
     exit 1
   fi
 fi
+
 
 if [ "$WORKLOAD" == "yarn-node-manager" ]; then
   # Activate YARN NodeManager

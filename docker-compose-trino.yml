@@ -22,6 +22,11 @@ services:
       - "coordinator"
     networks:
       - hadoop-network
+    # healthcheck:
+    #   test: ["CMD-SHELL", "(lsof -i :8080 && exit 0) || exit 1"]
+    #   interval: 15s
+    #   timeout: 10s
+    #   retries: 5
 
   trino-worker:
     build:
@@ -31,7 +36,8 @@ services:
     command: 
       - "http://trino-coordinator:8080"
     depends_on:
-      - trino-coordinator
+      trino-coordinator:
+        condition: service_healthy
     expose:
       - 8080
     networks:

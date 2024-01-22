@@ -42,9 +42,9 @@ services:
           cpus: '2'  # Set the desired CPU limit (e.g., half of a core)
           memory: '2G'
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:50090"]
-      interval: 10s
-      timeout: 5s
+      test: ["CMD-SHELL", "(lsof -i :50090 && exit 0) || exit 1"]
+      interval: 15s
+      timeout: 10s
       retries: 3
 
   hdfs-datanode:
@@ -54,6 +54,8 @@ services:
       - 9864
     depends_on:
       hdfs-namenode:
+        condition: service_healthy
+      hdfs-secondarynamenode:
         condition: service_healthy
     deploy:
       replicas: 2
